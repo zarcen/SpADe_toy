@@ -1,0 +1,142 @@
+<html>
+    <head>
+        <link type="text/css" rel="stylesheet" href="./rickshaw/rickshaw.min.css">
+        <script src="./rickshaw/vendor/d3.min.js"></script>
+        <script src="./rickshaw/vendor/d3.layout.min.js"></script>
+        <script src="./rickshaw/rickshaw.min.js"></script>
+        <script src="./js/d3/d3.min.js"></script>
+
+        <style>
+            #chart_container,#windowQ,#windowD,#windowH {
+                display: inline-block;
+                font-family: Arial, Helvetica, sans-serif;
+            }
+            #chart,#chartQ,#chartD,#chartH {
+                float: left;
+            }
+            #legend,#legendQ,#legendD,#legendH {
+                float: left;
+                margin-left: 15px;
+            }
+            #offset_form {
+                float: left;
+                margin: 2em 0 0 15px;
+                font-size: 13px;
+            }
+            #y_axis,#y_axisQ,#y_axisD,#y_axisH {
+                float: left;
+                width: 40px;
+            }
+
+            rect.bordered {
+                stroke: #E6E6E6;
+                stroke-width:2px;   
+            }
+
+            text.mono {
+                font-size: 9pt;
+                font-family: Consolas, courier;
+                fill: #aaa;
+            }
+
+            text.axis {
+                fill: #aaa;
+            }
+
+        </style>
+
+    </head>
+    <body>
+        <div id="chart_container">
+            <div id="y_axis"></div>
+            <div id="chart"></div>
+            <div id="legend"></div>
+
+        </div>
+        <br>
+        <div>
+            <div id="windowQ">
+                <div id="y_axisQ"></div>
+                <div id="chartQ"></div>
+                <div id="legendQ"></div>
+                <br>
+                <button type='button' id='shift_backwardQ' style='float:center'>&lt;&lt;</button>
+                <button type='button' id='shift_forwardQ' style='float:center'>&gt;&gt;</button>
+            </div>
+            <div id="windowD">
+                <div id="y_axisD"></div>
+                <div id="chartD"></div>
+                <div id="legendD"></div>
+                <br>
+                <button type='button' id='shift_backwardD' style='float:center'>&lt;&lt;</button>
+                <button type='button' id='shift_forwardD' style='float:center'>&gt;&gt;</button>
+            </div>
+            <div id="windowH">
+                <div id="y_axisH"></div>
+                <div id="chartH"></div>
+                <div id="legendH"></div>
+            </div>
+        </div>
+        <br>
+
+        <div id='seriesQ'></div>
+        <div id='seriesD'></div>
+        <div id='haarQ'></div>
+        <div id='haarD'></div>
+        <div id='D1'></div>
+
+        <button type='button' id='matching_btn' style='float:center;width:100px;height:80px' onClick="doSpADE();">SpADe</button>
+        <div id='heatmap'></div>
+        <div id="result">
+            <div id="chartR"></div>
+            <div id="legendR"></div>
+            <p>The bestX: <b id="bestX"></b></p>
+            <p>The scaleFactor: <b id="scaleFactor"></b></p>
+            <p>The matching score (the lower, the better): <b id="matching_score"></b></p>
+        </div>
+
+
+
+        <script type='text/javascript' src="./js/spade.js"></script>
+        <script type='text/javascript' src="./js/heatmap.js"></script>
+        <script type='text/javascript' src="./js/draw.js"></script>
+        <script type='text/javascript'>
+            function doSpADE() {
+                var matching_result = spade(seriesD, seriesQ);
+                var resultDataSeries = seriesD.slice(matching_result.bestX, matching_result.bestX + matching_result.scaleFactor * seriesQ.length)
+                for(var i = 0; i < resultDataSeries.length; i++) {
+                    resultDataSeries[i].x = i/parseFloat(matching_result.scaleFactor);
+                }
+
+                var result = new Rickshaw.Graph( {
+                    element: document.querySelector("#chartR"),
+                    width: 1280,
+                    height: 240,
+                    renderer: 'line',
+                    series: [
+                        {
+                            name: "query",
+                            data: seriesQ,
+                            color: colorQ
+                        },
+                        {
+                            name: "matching series",
+                            data: resultDataSeries,
+                            color: colorD
+                        },
+                    ]
+                } );
+                var legendR = new Rickshaw.Graph.Legend( {
+                    element: document.querySelector('#legendR'),
+                    graph: result
+                } );
+                result.render();
+                document.getElementById('bestX').innerHTML = matching_result.bestX.toString();
+                document.getElementById('scaleFactor').innerHTML = matching_result.scaleFactor.toString();
+                document.getElementById('matching_score').innerHTML = matching_result.bestHit.toString();
+            };
+
+        </script>
+
+    </body>
+</html>
