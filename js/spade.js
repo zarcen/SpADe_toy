@@ -41,8 +41,10 @@ for(var i = 0; i < lenD; i++) {
 }
 
 /**** test ****/
-var testQ = [8, 16, 3, 8, 23, 0, 15, 10, 0, 15, 30, 0, 0, 8, 15, 20, 5, 12, 5, 10]
-var testD = [30,20,10,20,30,10, 15, 5, 10, 20, 0, 15, 10, 0, 15, 25, 0, 8, 14, 22, 5, 12, 8, 22, 4, 10, 20, 30, 20, 10]
+//var testQ = [8, 16, 3, 8, 23, 0, 15, 10, 0, 15, 30, 0, 0, 8, 15, 20, 5, 12, 5, 10]
+//var testD = [30,20,10,20,30,10, 15, 5, 10, 20, 0, 15, 10, 0, 15, 25, 0, 8, 14, 22, 5, 12, 8, 22, 4, 10, 20, 30, 20, 10]
+var testD = [ 22.0, 9.0, 27.0, 16.0, 20.0, 18.0, 14.0, 14.0, 14.0, 5.0, 32.0, 33.0, 12.0, 28.0, 34.0, 40.0, ];
+var testQ =  [ 14.0, 14.0, 5.0, 32.0, 33.0, 12.0, 28.0, 34.0, ];
 
 var testObjQ = [];
 var testObjD = [];
@@ -132,7 +134,7 @@ var LPM_D1_scores = [];
 */
 function spade(series, query, window_size, epsilon) {
     window_size = typeof window_size !== 'undefined' ? window_size : 8; 
-    epsilon = typeof epsilon !== 'undefined' ? epsilon : 30; 
+    epsilon = typeof epsilon !== 'undefined' ? epsilon : 5; 
     var m = query.length-wDefault+1;
     var n = series.length-wDefault+1;
     var frameQ, frameD;
@@ -151,7 +153,7 @@ function spade(series, query, window_size, epsilon) {
             }
         }
     }
-    console.debug(LPM_matching);
+    //console.debug(LPM_matching);
     heatmap_entity = {};
     LPM_heatmap = [];
     for(var i = 0; i < m; i++) {
@@ -166,12 +168,13 @@ function spade(series, query, window_size, epsilon) {
     
     var starting_cands = [];
     var tmp_idx = 0;
-    for(var j = 0; j < n - window_size/2; j++) {
+    for(var j = 0; j < n; j++) {
         if(LPM_matching[0][j] > 0.0) {
             starting_cands[tmp_idx++] = j;
         }
     } 
     var sizeS = tmp_idx;
+    //console.debug(starting_cands);
 
     var distance_matrix = [];
     var path_tracing = [];
@@ -181,6 +184,8 @@ function spade(series, query, window_size, epsilon) {
         // compute_path from S
         distance_matrix[i] = compute_path(0,starting_cands[i],window_size,path_tracing[i]); 
     }   
+    //console.debug(distance_matrix);
+    //console.debug(path_tracing);
     var minD = Infinity;
     var chosenS;
     for(var i = 0; i < sizeS; i++) {
@@ -196,7 +201,7 @@ function spade(series, query, window_size, epsilon) {
     }
     //alert('chosenS = (0, ' + starting_cands[chosenS] + '); chosenE = (' + path_tracing[chosenS][path_tracing[chosenS].length - 1].x + ', ' + path_tracing[chosenS][path_tracing[chosenS].length - 1].y + ')');
     if(typeof chosenS === 'undefined') {
-        alert('No output. Relax the tolerance and run again.');
+        //alert('No output. Relax the tolerance and run again.');
         return spade(series, query, window_size, epsilon+3);
     }
     console.debug(starting_cands[chosenS]);
@@ -222,6 +227,23 @@ function spade(series, query, window_size, epsilon) {
 // searching region: (x+w/2 ~ x+(3/2)w, y+w/2 ~ y+(3/2)w) 
 // ** greedy version **
 function compute_path(px, py, w, path_list) {
+    if(LPM_matching.length == 1) {
+        var chosenP = Object.create(LPM_object);
+        var minD = Infinity;
+        var chosenY = py;
+        for (var y = py; y < LPM_matching[0].length; y++) {
+            if(LPM_matching[px][y] != 0.0) {
+                var curD = LPM_D1_scores[px][y];
+                if(curD < minD) {
+                    minD = curD;
+                    chosenY = y;
+                }
+            } 
+        }
+        chosenP.init(px, chosenY);
+        path_list.push(chosenP); 
+        return LPM_D1_scores[px][chosenY];
+    }
     if(px == LPM_matching.length - 1) {
         return 0;
     }

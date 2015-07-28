@@ -4,7 +4,7 @@ var colorQ = palette.color();
 var colorD = palette.color();
 var graph = new Rickshaw.Graph( {
     element: document.querySelector("#chart"),
-    width: 1280,
+    width: screen.width - 200,
     height: 240,
     renderer: 'line',
     series: [
@@ -22,8 +22,8 @@ var graph = new Rickshaw.Graph( {
 } );
 var windowQ = new Rickshaw.Graph( {
     element: document.querySelector("#chartQ"),
-    width: 150,
-    height: 240,
+    width: screen.width*0.2,
+    height: 300,
     renderer: 'line',
     series: [
         {
@@ -35,8 +35,8 @@ var windowQ = new Rickshaw.Graph( {
 } );
 var windowD = new Rickshaw.Graph( {
     element: document.querySelector("#chartD"),
-    width: 150,
-    height: 240,
+    width: screen.width*0.2,
+    height: 300,
     renderer: 'line',
     series: [
         {
@@ -48,8 +48,8 @@ var windowD = new Rickshaw.Graph( {
 } );
 var windowH = new Rickshaw.Graph( {
     element: document.querySelector("#chartH"),
-    width: 150,
-    height: 240,
+    width: screen.width*0.2,
+    height: 360,
     renderer: 'line',
     series: [
         {

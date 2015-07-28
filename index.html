@@ -54,29 +54,37 @@
 
         </div>
         <br>
-        <div>
-            <div id="windowQ">
-                <div id="y_axisQ"></div>
-                <div id="chartQ"></div>
-                <div id="legendQ"></div>
-                <br>
-                <button type='button' id='shift_backwardQ' style='float:center'>&lt;&lt;</button>
-                <button type='button' id='shift_forwardQ' style='float:center'>&gt;&gt;</button>
-            </div>
-            <div id="windowD">
-                <div id="y_axisD"></div>
-                <div id="chartD"></div>
-                <div id="legendD"></div>
-                <br>
-                <button type='button' id='shift_backwardD' style='float:center'>&lt;&lt;</button>
-                <button type='button' id='shift_forwardD' style='float:center'>&gt;&gt;</button>
-            </div>
-            <div id="windowH">
-                <div id="y_axisH"></div>
-                <div id="chartH"></div>
-                <div id="legendH"></div>
-            </div>
-        </div>
+        <table border="0" align="center" style="width:100%">
+            <tr>
+                <td id="windowQ" align="center">
+                    <div id="y_axisQ"></div>
+                    <div id="chartQ"></div>
+                    <div id="legendQ"></div>
+                </td>
+                <td id="windowD" align="center">
+                    <div id="y_axisD"></div>
+                    <div id="chartD"></div>
+                    <div id="legendD"></div>
+                </td>
+                <td id="windowH" align="center">
+                    <div id="y_axisH"></div>
+                    <div id="chartH"></div>
+                    <div id="legendH"></div>
+                </td>
+            </tr>
+            <tr>
+                <td align="center">
+                    <button type='button' id='shift_backwardQ' style='float:center'>&lt;&lt;</button>
+                    <button type='button' id='shift_forwardQ' style='float:center'>&gt;&gt;</button>
+                </td>
+                <td align="center">
+                    <button type='button' id='shift_backwardD' style='float:center'>&lt;&lt;</button>
+                    <button type='button' id='shift_forwardD' style='float:center'>&gt;&gt;</button>
+                </td>
+                <td>
+                </td>
+            </tr>
+        </table>
         <br>
 
         <div id='seriesQ'></div>
@@ -84,8 +92,8 @@
         <div id='haarQ'></div>
         <div id='haarD'></div>
         <div id='D1'></div>
-
         <button type='button' id='matching_btn' style='float:center;width:100px;height:80px' onClick="doSpADE();">SpADe</button>
+
         <div id='heatmap'></div>
         <div id="result">
             <div id="chartR"></div>
@@ -94,7 +102,6 @@
             <p>The scaleFactor: <b id="scaleFactor"></b></p>
             <p>The matching score (the lower, the better): <b id="matching_score"></b></p>
         </div>
-
 
 
         <script type='text/javascript' src="./js/spade.js"></script>
