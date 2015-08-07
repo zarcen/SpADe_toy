@@ -28,7 +28,7 @@ var windowQ = new Rickshaw.Graph( {
     series: [
         {
             name: "windowQ",
-            data: seriesQ.slice(0,8),
+            data: seriesQ.slice(0,wDefault),
             color: colorQ
         },
     ]
@@ -41,7 +41,7 @@ var windowD = new Rickshaw.Graph( {
     series: [
         {
             name: "windowD",
-            data: seriesD.slice(0,8),
+            data: seriesD.slice(0,wDefault),
             color: colorD
         },
     ]
@@ -119,12 +119,12 @@ var shift_backwardD = document.getElementById('shift_backwardD');
 var window_offsetQ = 0;
 var window_offsetD = 0;
 function shifting_renew() {
-    windowQ.series[0].data = seriesQ.slice(window_offsetQ, window_offsetQ+8);
-    windowD.series[0].data = seriesD.slice(window_offsetD, window_offsetD+8);
+    windowQ.series[0].data = seriesQ.slice(window_offsetQ, window_offsetQ+wDefault);
+    windowD.series[0].data = seriesD.slice(window_offsetD, window_offsetD+wDefault);
     windowQ.render();
     windowD.render();
-    haarQ = haar1d(seriesQ.slice(window_offsetQ, window_offsetQ+8));
-    haarD = haar1d(seriesD.slice(window_offsetD, window_offsetD+8));
+    haarQ = haar1d(seriesQ.slice(window_offsetQ, window_offsetQ+wDefault));
+    haarD = haar1d(seriesD.slice(window_offsetD, window_offsetD+wDefault));
     for(var i = 0; i < wDefault; i++) {
         haarQ[i].x = i;
         haarD[i].x = i;

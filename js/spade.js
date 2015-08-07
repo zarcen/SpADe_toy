@@ -41,10 +41,10 @@ for(var i = 0; i < lenD; i++) {
 }
 
 /**** test ****/
-//var testQ = [8, 16, 3, 8, 23, 0, 15, 10, 0, 15, 30, 0, 0, 8, 15, 20, 5, 12, 5, 10]
-//var testD = [30,20,10,20,30,10, 15, 5, 10, 20, 0, 15, 10, 0, 15, 25, 0, 8, 14, 22, 5, 12, 8, 22, 4, 10, 20, 30, 20, 10]
-var testD = [ 22.0, 9.0, 27.0, 16.0, 20.0, 18.0, 14.0, 14.0, 14.0, 5.0, 32.0, 33.0, 12.0, 28.0, 34.0, 40.0, ];
-var testQ =  [ 14.0, 14.0, 5.0, 32.0, 33.0, 12.0, 28.0, 34.0, ];
+var testQ = [8, 16, 3, 8, 23, 0, 15, 10, 0, 15, 30, 0, 0, 8, 15, 20, 5, 12, 5, 10]
+var testD = [30,20,10,20,30,10, 15, 5, 10, 20, 0, 15, 10, 0, 15, 25, 0, 8, 14, 22, 5, 12, 8, 22, 4, 10, 20, 30, 20, 10]
+//var testD = [ 22.0, 9.0, 27.0, 16.0, 20.0, 18.0, 14.0, 14.0, 14.0, 5.0, 32.0, 33.0, 12.0, 28.0, 34.0, 40.0, 42.0, 35.0, 28.0];
+//var testQ =  [ 13.0, 7.0, 40.0, 42.0, 15.0, 22.0, 28.0, 34.0];
 
 var testObjQ = [];
 var testObjD = [];
@@ -59,18 +59,19 @@ for(var i = 0; i < testD.length; i++) {
 }
 /**************/
 // uncomment if using the static test series
-/*
+
 seriesQ = testObjQ;
 seriesD = testObjD;
 lenQ = seriesQ.length;
 lenD = seriesD.length;
-*/
+
 
 function haar1d(series) {
     var i = 0;
     var n = series.length;
     var w = n;
     var haared_series = [];
+    var series_copy = series.slice();
     for(i = 0; i < n; i++) {
         haared_series[i] = Object.create(sample_point);
         haared_series[i].init(series[i].x, 0);
@@ -80,8 +81,12 @@ function haar1d(series) {
         w/=2;
         for(i = 0; i < w; i++)
         {
-            haared_series[i].y = (series[2*i].y + series[2*i+1].y)/Math.sqrt(2.0);
-            haared_series[i+w].y = (series[2*i].y - series[2*i+1].y)/Math.sqrt(2.0);
+            haared_series[i].y = (series_copy[2*i].y + series_copy[2*i+1].y)/Math.sqrt(2.0);
+            haared_series[i+w].y = (series_copy[2*i].y - series_copy[2*i+1].y)/Math.sqrt(2.0);
+        }
+        for ( i = 0; i < w * 2; i++ )
+        {
+          series_copy[i] = haared_series[i];
         }
     }
     return haared_series;
@@ -154,12 +159,13 @@ function spade(series, query, window_size, epsilon) {
         }
     }
     //console.debug(LPM_matching);
+    //console.debug(LPM_D1_scores);
     heatmap_entity = {};
     LPM_heatmap = [];
     for(var i = 0; i < m; i++) {
         for(var j = 0; j < n; j++) {
             LPM_heatmap[i*n+j] = Object.create(heatmap_entity);  
-            LPM_heatmap[i*n+j].value = (LPM_matching[i][j] > 0)? 1 : 0;
+            LPM_heatmap[i*n+j].value = (LPM_matching[i][j] > 0)? -1 : 0;
             LPM_heatmap[i*n+j].row = i;
             LPM_heatmap[i*n+j].col = j; 
         }
@@ -208,12 +214,16 @@ function spade(series, query, window_size, epsilon) {
     console.debug(distance_matrix);
     console.debug(path_tracing[chosenS]);
 
+
     var matching_score = 0.0;
     matching_score += LPM_D1_scores[0][starting_cands[chosenS]];
+    LPM_heatmap[starting_cands[chosenS]].value = 1;
     for(var i = 0; i < path_tracing[chosenS].length; i++) {
         matching_score += LPM_D1_scores[path_tracing[chosenS][i].x][path_tracing[chosenS][i].y];
+        LPM_heatmap[path_tracing[chosenS][i].x * n + path_tracing[chosenS][i].y].value = 1;
     }
     matching_score /= path_tracing[chosenS].length+1;
+    heatmap(LPM_heatmap, m, n);
 
     var target = {
         bestX: starting_cands[chosenS],
@@ -247,7 +257,7 @@ function compute_path(px, py, w, path_list) {
     if(px == LPM_matching.length - 1) {
         return 0;
     }
-    var region_xmin = px + w/2;        
+    var region_xmin = px + w/2;
     var region_xmax = px + w;
     var region_ymin = py + w/2;
     var region_ymax = py + w;
