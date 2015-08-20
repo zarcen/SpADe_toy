@@ -59,11 +59,12 @@ for(var i = 0; i < testD.length; i++) {
 }
 /**************/
 // uncomment if using the static test series
-
+/*
 seriesQ = testObjQ;
 seriesD = testObjD;
 lenQ = seriesQ.length;
 lenD = seriesD.length;
+*/
 
 
 function haar1d(series) {
